@@ -8,5 +8,5 @@ import javax.validation.constraints.Email;
 public class RestorePasswordRequest {
 	@Email
 	private String email;
-	private Boolean ShoeSize;
+	private Boolean isNotOk;
 }

@@ -174,7 +174,7 @@ public class AuthenticationController {
 			return "register";
 		}
 
-		if (restorePasswordRequest.getShoeSize() != null && restorePasswordRequest.getShoeSize()) {
+		if (restorePasswordRequest.getIsNotOk() != null && restorePasswordRequest.getIsNotOk()) {
 			log.error("BOT");
 			loginAttemptService.block(ipService.getClientIP());
 		}
@@ -229,7 +229,7 @@ public class AuthenticationController {
 			return "register";
 		}
 
-		if (resetPasswdRequest.getShoeSize() != null && resetPasswdRequest.getShoeSize()) {
+		if (resetPasswdRequest.getIsNotOk() != null && resetPasswdRequest.getIsNotOk()) {
 			log.error("BOT");
 			loginAttemptService.block(ipService.getClientIP());
 		}

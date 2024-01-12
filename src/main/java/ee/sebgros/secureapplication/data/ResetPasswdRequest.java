@@ -15,6 +15,6 @@ public class ResetPasswdRequest {
 			message = "Password must contain at least one: small letter, capital letter, number and one char from set '@#$%'")
 	private String password;
 
-	private Boolean shoeSize;
+	private Boolean isNotOk;
 
 }

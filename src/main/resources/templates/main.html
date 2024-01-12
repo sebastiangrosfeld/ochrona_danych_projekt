@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Main Page</h1>
+<ul>
+    <li sec:authorize="isAuthenticated()">Wellcome, <span sec:authentication="name"></span></li>
+    <li><a class="nav-link" href="/">Main</a></li>
+    <li sec:authorize="isAnonymous()"><a class="nav-link" href="/login">Login</a></li>
+    <li sec:authorize="isAnonymous()"><a class="nav-link" href="/register">Register</a></li>
+    <li sec:authorize="isAuthenticated()"><a class="nav-link" href="/create_note">Create notes</a></li>
+    <li sec:authorize="isAuthenticated()"><a class="nav-link" href="/perform_logout">Logout</a></li>
+    <li sec:authorize="isAuthenticated()"><a class="nav-link" href="/logs">Log</a></li>
+</ul>
+<p th:if="${element_not_found}" class="error">Note not found</p>
+<div sec:authorize="isAuthenticated()">
+    <h3>MY NOTES:</h3>
+    <ul>
+        <tr th:each="note : ${my_notes}">
+            <li>
+
+                <div>Title: <label th:text="${note.name}"></label></div>
+                <div>Author: <label th:text="${note.user.username}"></label></label></div>
+                <div>Link: <a th:href="@{'/show_note/' + ${note.id}}">Link</a></div>
+
+            </li>
+        </tr>
+    </ul>
+    <h3>ACCESS GRANTED NOTES:</h3>
+    <ul>
+        <tr th:each="note : ${access_granted}">
+            <li>
+
+                <div>Title: <label th:text="${note.name}"></label></div>
+                <div>Author: <label th:text="${note.user.username}"></label></label></div>
+                <div>Link: <a th:href="@{'/show_note/' + ${note.id}}">Link</a></div>
+
+            </li>
+        </tr>
+    </ul>
+</div>
+<h3>PUBLIC NOTES:</h3>
+<ul>
+    <tr th:each="note : ${public_notes}">
+        <li>
+
+            <div>Title: <label th:text="${note.name}"></label></div>
+            <div>Author: <label th:text="${note.user.username}"></label></label></div>
+            <div>Link: <a th:href="@{'/show_note/' + ${note.id}}">Link</a></div>
+
+        </li>
+    </tr>
+</ul>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Login logs</h1>
+<ul>
+    <li sec:authorize="isAuthenticated()">Wellcome, <span sec:authentication="name"></span></li>
+    <li><a class="nav-link" href="/">Main</a></li>
+    <li sec:authorize="isAnonymous()"><a class="nav-link" href="/login">Login</a></li>
+    <li sec:authorize="isAnonymous()"><a class="nav-link" href="/register">Register</a></li>
+    <li sec:authorize="isAuthenticated()"><a class="nav-link" href="/create_note">Create notes</a></li>
+    <li sec:authorize="isAuthenticated()"><a class="nav-link" href="/perform_logout">Logout</a></li>
+    <li sec:authorize="isAuthenticated()"><a class="nav-link" href="/logs">Logs</a></li>
+</ul>
+
+LOGS:
+<ul>
+    <tr th:each="log : ${loginLog}">
+        <li>
+
+            <div>Ip: <label th:text="${log.ip}"></label></div>
+            <div>Operation: <label th:text="${log.operation}"></label></label></div>
+            <div>Result: <label th:text="${log.result}"></label></label></div>
+            <div>Date: <label th:text="${log.date}"></label></label></div>
+
+        </li>
+    </tr>
+</ul>
+</body>
+</html>

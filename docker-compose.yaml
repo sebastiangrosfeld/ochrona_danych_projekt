@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  mariadb:
+    image: mariadb:10.3
+    restart: always
+    container_name: mariadb
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+    volumes:
+      - ./conf/mariadb:/docker-entrypoint-initdb.d
+      - ./conf/mariadb-e/50-server.cnf:/etc/mysql/mariadb.conf.d/50-server.cnf
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u root --password=password
+      interval: 1s
+      timeout: 20s
+      retries: 10
+    networks:
+      sec-net:
+        ipv4_address: 192.168.4.2
+
+  secure-notes:
+    build: .
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    volumes:
+      - ./conf/application.properties.d/nbs-vision-profiles-rest-server/application.properties:/tmp/nbs-vision-profiles-rest-server/application.properties:rw
+      - ./conf/note-app/application.properties:/app/application.properties:rw
+    networks:
+      sec-net:
+        ipv4_address: 192.168.4.3
+
+  nginx:
+    build: ./docker
+    #    image: nginx:latest
+    restart: always
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      #      - ./conf/etc/env/:/etc/nginx/
+      - ./conf/etc/env/nginx.conf:/etc/nginx/nginx.conf:rw
+      - ./conf/etc/env/passwd.txt:/etc/nginx/passwd.txt:rw
+      - ./conf/etc/env/localhost.cert.pem:/etc/nginx/localhost.cert.pem:rw
+      - ./conf/etc/env/localhost.key.pem:/etc/nginx/localhost.key.pem:rw
+      - ./conf/etc/env/snippets:/etc/nginx/snippets:rw
+    networks:
+      sec-net:
+        ipv4_address: 192.168.4.4
+
+networks:
+  sec-net:
+    driver: bridge
+    name: sec-net
+    ipam:
+      config:
+        - subnet: 192.168.4.0/24

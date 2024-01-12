@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Decode note:</h1>
+<ul>
+    <li sec:authorize="isAuthenticated()">Wellcome, <span sec:authentication="name"></span></li>
+    <li><a class="nav-link" href="/">Main</a></li>
+    <li sec:authorize="isAnonymous()"><a class="nav-link" href="/login">Login</a></li>
+    <li sec:authorize="isAnonymous()"><a class="nav-link" href="/register">Register</a></li>
+    <li sec:authorize="isAuthenticated()"><a class="nav-link" href="/create_note">Create notes</a></li>
+    <li sec:authorize="isAuthenticated()"><a class="nav-link" href="/perform_logout">Logout</a></li>
+</ul>
+<form method="post" th:object="${decryptRequest}" th:action="@{/show_note/} + ${id}">
+
+    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+    <div th:if="${#fields.hasErrors()}">
+        <span class="validationError">
+        Please correct the problems below and resubmit.
+        </span>
+    </div>
+
+    <p th:if="${error}" class="error">Wrong password</p>
+
+
+    <p th:if="${createNoteError}" class="error">ERROR SERVER</p>
+
+    <label for="password">Note password</label><br/>
+    <input type="password" id="password" name="password" th:field="*{password}" autofocus="autofocus"/> <br/>
+    <span class="validationError"
+          th:if="${#fields.hasErrors('password')}"
+          th:errors="*{password}">Password Error
+    </span>
+    <br>
+
+    <input type="submit" value="Decrypt">
+
+</form>
+
+<div th:if="${owner}">
+    <h3>Granted Access:</h3>
+    <ul>
+        <tr th:each="user : ${addedUsers}">
+            <li>
+
+                <div><label th:text="${user.name}"></label></div>
+
+            </li>
+        </tr>
+    </ul>
+
+    <h3>Add player:</h3>
+    <form method="post" th:object="${addPlayerAccess}" th:action="@{/add_player/} + ${id}">
+
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+        <label for="name">Username</label><br/>
+        <input type="text" id="name" name="name" th:field="*{name}" autofocus="autofocus"/> <br/>
+        <span class="validationError"
+              th:if="${#fields.hasErrors('name')}"
+              th:errors="*{name}">Username Error
+       </span>
+        <br/>
+        <input type="submit" value="Add player">
+    </form>
+</div>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+
+</head>
+<body>
+
+<h1>Register</h1>
+<ul>
+    <li sec:authorize="isAuthenticated()">Wellcome, <span sec:authentication="name"></span></li>
+    <li><a class="nav-link" href="/">Main</a></li>
+    <li sec:authorize="isAnonymous()"><a class="nav-link" href="/login">Login</a></li>
+    <li sec:authorize="isAnonymous()"><a class="nav-link" href="/register">Register</a></li>
+    <li sec:authorize="isAuthenticated()"><a class="nav-link" href="/create_note">Create notes</a></li>
+    <li sec:authorize="isAuthenticated()"><a class="nav-link" href="/perform_logout">Logout</a></li>
+</ul>
+<form method="post" th:object="${registerRequest}" th:action="@{/register}">
+
+    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+    <p th:if="${registerError}" class="error">Account with username or email exists</p>
+
+    <div th:if="${#fields.hasErrors()}">
+        <span class="validationError">
+        Please correct the problems below and resubmit.
+        </span>
+    </div>
+
+    <label for="username">Username</label><br/>
+    <input type="text" id="username" name="username" th:field="*{username}" autofocus="autofocus"/> <br/>
+    <span class="validationError"
+          th:if="${#fields.hasErrors('username')}"
+          th:errors="*{username}">Username Error
+    </span>
+    <br>
+
+    <label for="email">Email</label><br/>
+    <input id="email" name="email" th:field="*{email}" autofocus="autofocus"></input> <br/>
+    <span class="validationError"
+          th:if="${#fields.hasErrors('email')}"
+          th:errors="*{email}">Note Error
+    </span>
+    <br>
+
+    <label for="password">Password</label><br/>
+    <input type="password" id="password" th:field="*{password}" name="active"/><br/>
+    <span class="validationError"
+          th:if="${#fields.hasErrors('password')}"
+          th:errors="*{password}">Password Error
+    </span>
+
+    <br>
+    <h6>
+        Password Strength Checker
+    </h6>
+    <span id="StrengthDisp" class="badge displayBadge">Weak</span>
+    <div>Entropy : <span id="entropy">Weak</span> < 50</div>
+
+    <br>
+    <br>
+
+    <input type="checkbox" name="isNotOk" value="1" style="display:none !important" tabindex="-1" autocomplete="off">
+
+
+    <input type="submit" value="Create">
+</form>
+
+<script>
+    let timeout;
+
+    let password = document.getElementById('password')
+    let enrtropy = document.getElementById('entropy')
+    let strengthBadge = document.getElementById('StrengthDisp')
+
+
+    let strongPassword = new RegExp('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})')
+    let mediumPassword = new RegExp('((?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{6,}))|((?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9])(?=.{8,}))')
+
+    function StrengthChecker(PasswordParameter) {
+
+        if (strongPassword.test(PasswordParameter)) {
+            strengthBadge.style.backgroundColor = "green"
+            strengthBadge.textContent = 'Strong'
+        } else if (mediumPassword.test(PasswordParameter)) {
+            strengthBadge.style.backgroundColor = 'blue'
+            strengthBadge.textContent = 'Medium'
+        } else {
+            strengthBadge.style.backgroundColor = 'red'
+            strengthBadge.textContent = 'Weak'
+        }
+        let num = PasswordParameter.length * Math.log2(128);
+        enrtropy.textContent = num.toString();
+    }
+
+    password.addEventListener("input", () => {
+
+        strengthBadge.style.display = 'block'
+        clearTimeout(timeout);
+
+        timeout = setTimeout(() => StrengthChecker(password.value), 500);
+
+        if (password.value.length !== 0) {
+            strengthBadge.style.display != 'block'
+        } else {
+            strengthBadge.style.display = 'none'
+        }
+    });
+</script>
+</body>
+</html>
